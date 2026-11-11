@@ -36,6 +36,11 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // The hosted preview proxy serves the dev server from a different origin.
+  // Allowing it keeps HMR working in previews; production builds ignore it.
+  allowedDevOrigins: isDev
+    ? (process.env.ALLOWED_DEV_ORIGINS ?? '*.e2b.app,*.arena.ai').split(',').map((origin) => origin.trim())
+    : [],
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],

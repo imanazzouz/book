@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const product = await container.catalog.findProductBySlug(slug);
+  const product = await container.catalog.findProductBySlug(slug, asLocale(locale) ?? 'ar');
   if (!product) notFound();
 
   return {
@@ -39,7 +39,7 @@ export default async function ProductPage({
   if (!locale) notFound();
   setRequestLocale(locale);
 
-  const product = await container.catalog.findProductBySlug(slug);
+  const product = await container.catalog.findProductBySlug(slug, locale);
   if (!product) notFound();
 
   const t = await getTranslations('product');
@@ -81,7 +81,13 @@ export default async function ProductPage({
                   key={image.url}
                   className="relative aspect-square overflow-hidden rounded-xl border border-line"
                 >
-                  <Image src={image.url} alt={image.alt} fill sizes="120px" className="object-cover" />
+                  <Image
+                    src={image.url}
+                    alt={image.alt}
+                    fill
+                    sizes="120px"
+                    className="object-cover"
+                  />
                 </div>
               ))}
             </div>
@@ -96,7 +102,9 @@ export default async function ProductPage({
             </Badge>
           </div>
 
-          <h1 className="mt-4 text-3xl font-extrabold text-forest-deep sm:text-4xl">{product.name}</h1>
+          <h1 className="mt-4 text-3xl font-extrabold text-forest-deep sm:text-4xl">
+            {product.name}
+          </h1>
 
           <div className="mt-4 flex items-baseline gap-2">
             <Price amountDzd={product.priceDzd} locale={locale} size="lg" />
@@ -129,8 +137,8 @@ export default async function ProductPage({
                 <Truck className="size-4" aria-hidden /> {t('delivery')}
               </dt>
               <dd className="font-semibold text-ink">
-                {product.supportsDelivery ? '✓' : '—'}
-                {product.supportsPickup ? ' · pickup' : ''}
+                {product.supportsDelivery ? t('deliveryAvailable') : t('fulfillmentUnavailable')}
+                {product.supportsPickup ? ` · ${t('pickupAvailable')}` : ''}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">

@@ -8,6 +8,12 @@ export type ProductStatus = 'draft' | 'pending_review' | 'published' | 'out_of_s
 
 export type CatalogSort = 'newest' | 'price_asc' | 'price_desc';
 
+/**
+ * Mirrors the URL locale. Catalog reads are locale-aware for *display names*
+ * (wilaya, commune, image alt text), never for money or quantities.
+ */
+export type CatalogLocale = 'ar' | 'fr' | 'en';
+
 export interface ProductImage {
   url: string;
   alt: string;
@@ -57,6 +63,11 @@ export interface StoreDetail {
 export interface CategorySummary {
   slug: string;
   productCount: number;
+}
+
+export interface WilayaSummary {
+  code: string;
+  name: string;
 }
 
 export interface ProductListQuery {

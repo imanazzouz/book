@@ -126,7 +126,7 @@
     "filters": "Filtrer les résultats",
     "category": "Catégorie",
     "wilaya": "Wilaya",
-    "wilayaNote": "Le filtre par wilaya sera activé avec la base de données (phase 3).",
+    "wilayaNote": "Les 69 wilayas officielles, conformément à la loi 26-06.",
     "maxPrice": "Prix maximum",
     "sort": "Trier par",
     "sortNewest": "Plus récents",
@@ -141,13 +141,14 @@
     "emptyCta": "Devenir agriculteur",
     "clearFilters": "Retirer les filtres",
     "searchLabel": "Rechercher sur le marché",
-    "resultsLabel": "Nombre de résultats"
+    "resultsLabel": "Nombre de résultats",
+    "allWilayas": "Toutes les wilayas"
   },
   "categories": {
     "title": "Catégories",
     "subtitle": "Chaque catégorie ouvre les produits qui y sont publiés.",
     "emptyTitle": "Aucune catégorie affichée",
-    "emptyBody": "Les catégories seront ajoutées avec la base de données en phase 3, puis gérées par l'administration."
+    "emptyBody": "Les catégories sont gérées par l’administration et apparaissent ici dès qu’elles existent."
   },
   "product": {
     "notFoundTitle": "Produit introuvable",
@@ -164,7 +165,10 @@
     "noReviews": "Aucun avis pour l'instant. Un avis n'est possible qu'après une commande reçue.",
     "related": "De la même boutique",
     "organic": "Produit biologique",
-    "soon": "L'ajout au panier sera activé avec les commandes (phase 5)."
+    "soon": "L'ajout au panier sera activé avec les commandes (phase 5).",
+    "deliveryAvailable": "Livraison disponible",
+    "pickupAvailable": "Retrait à la ferme",
+    "fulfillmentUnavailable": "Non disponible"
   },
   "store": {
     "notFoundTitle": "Boutique introuvable",

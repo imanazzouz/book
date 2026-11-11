@@ -126,7 +126,7 @@
     "filters": "Filter results",
     "category": "Category",
     "wilaya": "Wilaya",
-    "wilayaNote": "Wilaya filtering activates once the database is connected (phase 3).",
+    "wilayaNote": "The 69 official wilayas, under Law 26-06.",
     "maxPrice": "Max price",
     "sort": "Sort by",
     "sortNewest": "Newest",
@@ -141,13 +141,14 @@
     "emptyCta": "Join as a farmer",
     "clearFilters": "Clear filters",
     "searchLabel": "Search the market",
-    "resultsLabel": "Number of results"
+    "resultsLabel": "Number of results",
+    "allWilayas": "All wilayas"
   },
   "categories": {
     "title": "Categories",
     "subtitle": "Each category opens the products published under it.",
     "emptyTitle": "No categories to show",
-    "emptyBody": "Categories arrive with the database setup in phase 3, and are managed by administrators afterwards."
+    "emptyBody": "Categories are managed by administrators and appear here once they exist."
   },
   "product": {
     "notFoundTitle": "Product not found",
@@ -164,7 +165,10 @@
     "noReviews": "No reviews yet. Reviews are only possible after a delivered order.",
     "related": "More from this store",
     "organic": "Organic",
-    "soon": "Add to cart activates with the ordering system (phase 5)."
+    "soon": "Add to cart activates with the ordering system (phase 5).",
+    "deliveryAvailable": "Delivery available",
+    "pickupAvailable": "Farm pickup",
+    "fulfillmentUnavailable": "Not available"
   },
   "store": {
     "notFoundTitle": "Store not found",

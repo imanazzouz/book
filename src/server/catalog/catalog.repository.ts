@@ -1,19 +1,27 @@
 import type {
+  CatalogLocale,
   CategorySummary,
   Paginated,
   ProductDetail,
   ProductListQuery,
   ProductSummary,
   StoreDetail,
+  WilayaSummary,
 } from './types';
 
 /**
- * Read contract for the marketplace. The Prisma implementation replaces the
- * empty one in phase 3 without touching pages or use cases.
+ * Read contract for the marketplace. The Drizzle implementation
+ * (drizzle-catalog.repository.ts) replaces the empty one without touching pages
+ * or use cases beyond passing the locale they already know.
  */
 export interface CatalogRepository {
   listCategories(): Promise<CategorySummary[]>;
-  listPublishedProducts(query: ProductListQuery): Promise<Paginated<ProductSummary>>;
-  findProductBySlug(slug: string): Promise<ProductDetail | null>;
-  findStoreBySlug(slug: string): Promise<StoreDetail | null>;
+  /** Official wilaya list for the market filters (69 entries, localized). */
+  listWilayas(locale?: CatalogLocale): Promise<WilayaSummary[]>;
+  listPublishedProducts(
+    query: ProductListQuery,
+    locale?: CatalogLocale,
+  ): Promise<Paginated<ProductSummary>>;
+  findProductBySlug(slug: string, locale?: CatalogLocale): Promise<ProductDetail | null>;
+  findStoreBySlug(slug: string, locale?: CatalogLocale): Promise<StoreDetail | null>;
 }

@@ -6,6 +6,7 @@ import type {
   ProductListQuery,
   ProductSummary,
   StoreDetail,
+  WilayaSummary,
 } from './types';
 
 /**
@@ -15,6 +16,10 @@ import type {
  */
 export const emptyCatalogRepository: CatalogRepository = {
   async listCategories(): Promise<CategorySummary[]> {
+    return [];
+  },
+
+  async listWilayas(): Promise<WilayaSummary[]> {
     return [];
   },
 

@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Lint · Typecheck · Tests · Build
+    name: Lint · Typecheck · Tests · Schema · Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +26,8 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - run: npm run db:verify:local
+      - run: npm run check:images
       - run: npm run build
         env:
           APP_URL: https://agridirect.dz

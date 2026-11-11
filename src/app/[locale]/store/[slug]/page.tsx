@@ -16,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const store = await container.catalog.findStoreBySlug(slug);
+  const store = await container.catalog.findStoreBySlug(slug, asLocale(locale) ?? 'ar');
   if (!store) notFound();
 
   return {
@@ -36,7 +36,7 @@ export default async function StorePage({
   if (!locale) notFound();
   setRequestLocale(locale);
 
-  const store = await container.catalog.findStoreBySlug(slug);
+  const store = await container.catalog.findStoreBySlug(slug, locale);
   if (!store) notFound();
 
   const t = await getTranslations('store');
@@ -45,7 +45,14 @@ export default async function StorePage({
     <div>
       <div className="relative h-48 w-full overflow-hidden bg-soft-deep sm:h-64">
         {store.cover ? (
-          <Image src={store.cover.url} alt={store.cover.alt} fill sizes="100vw" className="object-cover" priority />
+          <Image
+            src={store.cover.url}
+            alt={store.cover.alt}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+          />
         ) : null}
       </div>
 
@@ -54,7 +61,13 @@ export default async function StorePage({
           <div className="flex flex-wrap items-start gap-5">
             {store.logo ? (
               <span className="relative size-20 shrink-0 overflow-hidden rounded-2xl border border-line">
-                <Image src={store.logo.url} alt={store.logo.alt} fill sizes="80px" className="object-cover" />
+                <Image
+                  src={store.logo.url}
+                  alt={store.logo.alt}
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
               </span>
             ) : (
               <span className="flex size-20 shrink-0 items-center justify-center rounded-2xl bg-soft text-forest">
@@ -80,7 +93,9 @@ export default async function StorePage({
                   {[store.wilayaName, store.communeName].filter(Boolean).join(' · ')}
                 </p>
               ) : null}
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">{store.description}</p>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
+                {store.description}
+              </p>
             </div>
           </div>
 
@@ -90,10 +105,10 @@ export default async function StorePage({
                 <Truck className="size-4" aria-hidden />
                 {t('deliveryInfo')}
               </p>
-              {store.deliveryNotes ? <p className="mt-1.5 text-muted">{store.deliveryNotes}</p> : null}
-              {store.supportsPickup ? (
-                <p className="mt-1.5 text-muted">{t('pickup')}</p>
+              {store.deliveryNotes ? (
+                <p className="mt-1.5 text-muted">{store.deliveryNotes}</p>
               ) : null}
+              {store.supportsPickup ? <p className="mt-1.5 text-muted">{t('pickup')}</p> : null}
             </div>
           ) : null}
         </div>

@@ -7,7 +7,6 @@ import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { EmptyState } from '@/components/ui/empty-state';
 import { FieldHint, Input, Label, Select } from '@/components/ui/field';
-import { Notice } from '@/components/ui/notice';
 import { Pagination } from '@/components/ui/pagination';
 import { ProductCard } from '@/components/ui/product-card';
 import { SortSelect } from '@/components/market/sort-select';
@@ -55,9 +54,10 @@ export default async function MarketPage({
 
   const raw = await searchParams;
   const query = parseMarketSearchParams(raw);
-  const [result, categories] = await Promise.all([
-    searchMarket(container.catalog, query),
+  const [result, categories, wilayaOptions] = await Promise.all([
+    searchMarket(container.catalog, query, locale),
     container.catalog.listCategories(),
+    container.catalog.listWilayas(locale),
   ]);
 
   const t = await getTranslations('market');
@@ -65,13 +65,16 @@ export default async function MarketPage({
   const counts = new Map(categories.map((category) => [category.slug, category.productCount]));
 
   const activeCategory = CATEGORY_SEED.find((category) => category.slug === query.categorySlug);
-  const hasFilters = Boolean(query.q || query.categorySlug || query.maxPriceDzd);
+  const hasFilters = Boolean(
+    query.q || query.categorySlug || query.wilayaCode || query.maxPriceDzd,
+  );
 
   const buildHref = (patch: Record<string, string | undefined>) => {
     const params = new URLSearchParams();
     const merged = {
       q: pick(raw.q),
       category: query.categorySlug,
+      wilaya: query.wilayaCode,
       sort: query.sort === 'newest' ? undefined : query.sort,
       maxPrice: query.maxPriceDzd,
       ...patch,
@@ -100,7 +103,9 @@ export default async function MarketPage({
               </h2>
 
               <form action={`/${locale}/market`} method="get" className="mt-4 space-y-4">
-                {query.sort !== 'newest' ? <input type="hidden" name="sort" value={query.sort} /> : null}
+                {query.sort !== 'newest' ? (
+                  <input type="hidden" name="sort" value={query.sort} />
+                ) : null}
                 <div>
                   <Label htmlFor="market-q">{tCommon('search')}</Label>
                   <Input
@@ -138,8 +143,18 @@ export default async function MarketPage({
 
               <div className="mt-5 border-t border-line pt-5">
                 <Label htmlFor="market-wilaya">{t('wilaya')}</Label>
-                <Select id="market-wilaya" disabled aria-describedby="wilaya-note">
-                  <option>{tCommon('availableSoon')}</option>
+                <Select
+                  id="market-wilaya"
+                  name="wilaya"
+                  defaultValue={query.wilayaCode ?? ''}
+                  aria-describedby="wilaya-note"
+                >
+                  <option value="">{t('allWilayas')}</option>
+                  {wilayaOptions.map((wilaya) => (
+                    <option key={wilaya.code} value={wilaya.code}>
+                      {wilaya.code} — {wilaya.name}
+                    </option>
+                  ))}
                 </Select>
                 <FieldHint>
                   <span id="wilaya-note">{t('wilayaNote')}</span>
@@ -231,9 +246,7 @@ export default async function MarketPage({
                     icon={<Sprout className="size-7" aria-hidden />}
                     title={t('emptyTitle')}
                     body={t('emptyBody')}
-                    actions={
-                      <ButtonLink href="/join-farmer">{t('emptyCta')}</ButtonLink>
-                    }
+                    actions={<ButtonLink href="/join-farmer">{t('emptyCta')}</ButtonLink>}
                   />
                 )
               ) : (
@@ -260,8 +273,6 @@ export default async function MarketPage({
                 </>
               )}
             </div>
-
-            <Notice className="mt-6">{t('wilayaNote')}</Notice>
           </section>
         </div>
       </Container>

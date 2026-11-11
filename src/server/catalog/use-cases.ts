@@ -2,6 +2,7 @@ import type { CatalogRepository } from './catalog.repository';
 import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
+  type CatalogLocale,
   type CatalogSort,
   type Paginated,
   type ProductListQuery,
@@ -47,9 +48,7 @@ export function parseMarketSearchParams(params: RawMarketSearchParams): ProductL
   const maxPriceRaw = normalizeText(firstValue(params.maxPrice), 12);
   const maxPriceNumber = maxPriceRaw ? Number(maxPriceRaw) : Number.NaN;
   const maxPriceDzd =
-    Number.isFinite(maxPriceNumber) && maxPriceNumber > 0
-      ? maxPriceNumber.toFixed(2)
-      : undefined;
+    Number.isFinite(maxPriceNumber) && maxPriceNumber > 0 ? maxPriceNumber.toFixed(2) : undefined;
 
   const query: ProductListQuery = {
     sort,
@@ -72,10 +71,11 @@ export function parseMarketSearchParams(params: RawMarketSearchParams): ProductL
 export function searchMarket(
   repository: CatalogRepository,
   query: ProductListQuery,
+  locale: CatalogLocale = 'ar',
 ): Promise<Paginated<ProductSummary>> {
   const safeQuery: ProductListQuery = {
     ...query,
     pageSize: Math.min(Math.max(query.pageSize, 1), MAX_PAGE_SIZE),
   };
-  return repository.listPublishedProducts(safeQuery);
+  return repository.listPublishedProducts(safeQuery, locale);
 }

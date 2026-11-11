@@ -19,7 +19,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
 
   const [latest, categories] = await Promise.all([
-    searchMarket(container.catalog, { sort: 'newest', page: 1, pageSize: 4 }),
+    searchMarket(container.catalog, { sort: 'newest', page: 1, pageSize: 4 }, locale),
     container.catalog.listCategories(),
   ]);
 

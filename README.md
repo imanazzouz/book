@@ -4,9 +4,9 @@
 
 <p align="left">
   <img alt="status" src="https://img.shields.io/badge/status-phase%202%20·%20public%20UI-244A35" />
-  <img alt="stack" src="https://img.shields.io/badge/stack-Next.js%2016%20·%20React%2019%20·%20TypeScript-6B9A62" />
+  <img alt="stack" src="https://img.shields.io/badge/stack-Next.js%2016%20·%20Postgres%20%2B%20Drizzle-6B9A62" />
   <img alt="i18n" src="https://img.shields.io/badge/i18n-ar%20·%20fr%20·%20en-F5F0E5" />
-  <img alt="tests" src="https://img.shields.io/badge/unit%20tests-28%20passing-244A35" />
+  <img alt="tests" src="https://img.shields.io/badge/tests-60%20passing-244A35" />
 </p>
 
 ## الحالة
@@ -14,9 +14,9 @@
 | المرحلة | الحالة |
 |---|---|
 | 1 — التحليل المعماري والتخطيط | ✅ معتمدة |
-| **2 — الأساس + Design System + الواجهات العامة** | ✅ **مكتملة ومتحقَّق منها** ([التقرير](./docs/phase-2/report.md)) |
-| 3 — قاعدة البيانات (Neon + Prisma) والطبقات | ⏭️ التالية |
-| 4 — المصادقة (Google + OTP) والأمان | ⏳ |
+| 2 — الأساس + Design System + الواجهات العامة | ✅ مكتملة ومتحقَّق منها ([التقرير](./docs/phase-2/report.md)) |
+| **3 — قاعدة البيانات (Neon + Drizzle) ومسار القراءة الحقيقي** | ✅ **مكتملة ومتحقَّق منها** ([التقرير](./docs/phase-3/report.md)) — ترحيلات وبذر نُفِّذا على Postgres 17، **بانتظار `DATABASE_URL` لتشغيلهما على Neon** |
+| 4 — المصادقة (Google + OTP) والأمان | ⏭️ التالية |
 | 5 — وظائف المنصة (متجر، منتجات، سلة، طلبات، لوحات) | ⏳ |
 | 6 — الاختبار الشامل (E2E/Security/A11y) | ⏳ |
 | 7 — النشر (GitHub → Vercel → Neon) | ⏳ |
@@ -28,11 +28,25 @@ npm ci
 npm run dev        # http://localhost:3000 → يوجّه إلى /ar
 npm run lint       # ESLint 9 (flat) + next/core-web-vitals + TypeScript
 npm run typecheck  # tsc --noEmit (strict)
-npm test           # Vitest (28 اختبارًا)
+npm test           # Vitest: 60 اختبارًا (28 وحدة + 32 تكامل)
 npm run build      # بناء إنتاجي
+npm run check:images
 ```
 
-لا يحتاج المشروع أي متغيّر بيئة في المرحلة 2. الأسماء المستقبلية موثّقة في `.env.example` فقط (بلا قيم).
+### قاعدة البيانات
+
+```bash
+cp .env.example .env.local        # ثم ضع DATABASE_URL من Neon
+npx drizzle-kit migrate           # 43 جدولًا + الامتدادات + المُشغّلات
+npm run db:seed                   # 69 ولاية · 1541 بلدية · 8 تصنيفات · أدوار · توصيل
+npm run db:verify                 # يتحقق أن القاعدة سليمة وفارغة من البيانات التجارية
+ADMIN_EMAIL=you@example.dz npm run admin:create   # مشرف عام واحد
+```
+
+بلا `DATABASE_URL` يعمل الموقع على مستودع فارغ صريح (واجهات كاملة، بلا بيانات ملفّقة).
+للتجربة محليًا دون Neon: `npm run db:local` يخدم Postgres 17 على `127.0.0.1:55432`
+(مع `DATABASE_SSL=disable DATABASE_POOL_MAX=1`)، و`TEST_DATABASE_URL=… npm run test:integration`
+يشغّل اختبارات التكامل على ذلك الخادم بسائق `pg` الإنتاجي.
 
 ## ما هو منفّذ الآن
 
@@ -42,7 +56,9 @@ npm run build      # بناء إنتاجي
 - رؤوس أمان + CSP، `noindex` للصفحات الخاصة، تحقق وتنقية لمعاملات البحث، sitemap/robots.
 - 4 صور فوتوغرافية حقيقية مرخّصة (Unsplash) بلا أشخاص أو حيوانات — [سجل التراخيص](./docs/asset-licenses.md).
 
-**غير منفّذ بعد (بقرار):** المصادقة، قاعدة البيانات، السلة والطلبات، لوحات المزارع والإدارة. لا توجد أزرار كاذبة: كل ما لم يُنفَّذ يظهر معطّلًا مع سبب واضح، والمنتجات تُعرض بحالة فراغ صادقة لأن **قاعدة البيانات لا تحتوي أي بيانات تجريبية**.
+- **قاعدة بيانات حقيقية:** 43 جدولًا و22 نوعًا، قيود وسلامة مرجعية، `audit_logs` غير قابلة للتعديل على مستوى القاعدة، بحث ثلاثي يتجاهل الحركات، بذر رسمي (69/1541) قابل لإعادة التشغيل، ومسارات الصفحات العامة تقرأ منها فعليًا.
+
+**غير منفّذ بعد (بقرار):** المصادقة، السلة والطلبات، لوحات المزارع والإدارة. لا توجد أزرار كاذبة: كل ما لم يُنفَّذ يظهر معطّلًا مع سبب واضح، والمنتجات تُعرض بحالة فراغ صادقة لأن **القاعدة لا تحتوي أي بيانات تجارية**.
 
 ## التوثيق
 
@@ -50,6 +66,8 @@ npm run build      # بناء إنتاجي
 |---|---|
 | [docs/phase-1](./docs/phase-1/README.md) | المعمارية، ERD، RBAC، Sitemap والتدفقات، الأمان، خطة المراحل |
 | [docs/phase-2/report.md](./docs/phase-2/report.md) | ما بُني، نتائج التحقق الفعلية، القرارات، القيود |
+| [docs/phase-3/report.md](./docs/phase-3/report.md) | المخطط، الترحيلات، البذر، نتائج `db:verify` واختبارات التكامل، خطة Neon |
+| [docs/phase-3/adr-0002-drizzle.md](./docs/phase-3/adr-0002-drizzle.md) | قرار ORM: Drizzle بدل Prisma (السبب والبدائل المرفوضة) |
 | [docs/asset-licenses.md](./docs/asset-licenses.md) | مصادر الصور وتراخيصها وقواعد الصور |
 
 ## المبادئ
